@@ -1,10 +1,10 @@
-##############################                                ########################################################################################
+###################################################################################################################################################
 ##############################  State of Mexico PREP Results  ########################################################################################
 ##############################       (Notes in Spanish)       ########################################################################################
 ######## Elena Badillo June 5, 2017 ##################################################################################################################
 ##################################################################### Info about SoM PREP: http://www.ieem.org.mx/ ###################################
-setwd("C:/DIR") #set your own working directory
-
+dir<-"C:/DIR" #set your own working directory
+setwd<-dir
 library(data.table)
 library(dplyr)
 library(reshape2)
@@ -14,7 +14,7 @@ library(downloader)
 
 fileURL<-"http://www.prepieem.org.mx/MEX_GOB_2017.zip" #descargar los datos del sitio
 download(fileURL, dest="dataset.zip", mode="wb") 
-unzip ("dataset.zip", exdir = "./EM2017")
+unzip ("dataset.zip", exdir = dir)
 
 prep<-read.csv("./MEX_GOB_2017.csv",header = TRUE, skip=6)
 prep<-data.frame(prep)
@@ -26,7 +26,6 @@ for (j in 1:ncol(prepsub)){ #sustituir casillas que digan "ILEGIBLE" o "SIN DATO
                 if (prepsub[i,j]=="ILEGIBLE" | prepsub[i,j]=="SIN DATO") {                        
                         prepsub[i,j]=0                        
                 }}}
-
 
 for (j in (1:ncol(prepsub))) {        
         prepsub[,j]<-as.numeric(paste(prepsub[,j]))        
@@ -41,9 +40,7 @@ prepsub$pritot<- prepsub$pri+prepsub$pes+prepsub$pvem+prepsub$na+prepsub$c_pri_p
 
 #PRI
 sumpritot<-as.numeric(c(1:n))
-# prepsub$pritot<-as.numeric(paste(prepsub$pritot))
 sumpritot[1]<-prepsub$pritot[1]
-
 for (i in 2:n) {      
         sumpritot[i] = sumpritot[i-1]+prepsub$pritot[i]      
 }
@@ -53,7 +50,6 @@ sumpritot<-data.frame(sumpritot)
 summorena<-as.numeric(c(1:n))
 prepsub$morena<-as.numeric(paste(prepsub$morena))
 summorena[1]<-prepsub$morena[1]
-
 for (i in 2:n) {      
         summorena[i] = summorena[i-1]+prepsub$morena[i]       
 }
@@ -63,7 +59,6 @@ summorena2<-data.frame(summorena)
 sumprd<-as.numeric(c(1:n))
 prepsub$prd<-as.numeric(paste(prepsub$prd))
 sumprd[1]<-prepsub$prd[1]
-
 for (i in 2:n) {        
         sumprd[i] = sumprd[i-1]+prepsub$prd[i]       
 }
@@ -73,18 +68,15 @@ sumprd2<-data.frame(sumprd)
 sumpan<-as.numeric(c(1:n))
 prepsub$pan<-as.numeric(paste(prepsub$pan))
 sumpan[1]<-prepsub$pan[1]
-
 for (i in 2:n) {        
         sumpan[i] = sumpan[i-1]+prepsub$pan[i]        
 }
-
 sumpan2<-data.frame(sumpan)
 
 #TOTAL
 sumtot<-as.numeric(c(1:n))
 prepsub$tot<-as.numeric(paste(prepsub$total))
 sumtot[1]<-prepsub$total[1]
-
 for (i in 2:n) {       
         sumtot[i] = sumtot[i-1]+prepsub$total[i]      
 }
@@ -119,5 +111,4 @@ ggplot(melt, aes(x = Fecha,y = Valor, group= Partido, colour= Partido)) +
              subtitle="Votación por Partido", 
              caption="Fuente: IEEM", 
              y="%") 
-
 ggsave(filename="ResultadosPREP.jpg", width=11, height=7) #guarda la grafica en jpg, para visualizarse con mejor resolución
